@@ -1,0 +1,38 @@
+-- 1. Empleados (nombre y apellido) junto a su salario.
+πNomE, Ap, Salario Emp
+
+-- 2. Renombre el nombre de la columna NomE a Nombre, Ap a Apellido y Salario a Sueldo.
+ρ Nombre←NomE, Apellido←Ap, Sueldo←Salario Emp
+
+-- 3. Nombre de los empleados junto al nombre del departamento donde trabajan.
+π Emp.NomE, Dep.Nom(Emp ⨝ Dep)
+
+-- 4. Nombre de los empleados que trabajan en los departamentos de Finanzas (Finance) o Transporte (Shipping)
+πNomE(Emp ⨝ πCodD σNom='Finance' ∨ Nom='Shipping' Dep)
+
+-- 5. Trabajos (nombre) donde sus empleados cobran únicamente sueldos superiores a 5000.
+π NomT(Trabajo ⨝ πCodT σSalario > 5000 Emp)
+
+-- 6. Empleados que han trabajado (Historia) en el departamento 90 y 60
+Emp ⨝ πCodE((σ CodD=90 Historia)∪(σ CodD=60  Historia))
+
+-- 7. Empleados que tienen el mismo sueldo que Alexander Khoo (Código de empleado 115).
+σTABLA.CodE != 115 (ρTABLA (Emp⨝(πSalario σCodE= 115 Emp)))
+
+-- 8. Nombre de los empleados cuyo sueldo es mayor que el de Sigal Tobias (Código de empleado 117)
+πTABLA.NomE(σ TABLA.Salario> Emp.Salario and Emp.CodE=117 (ρTABLA Emp⨯Emp))
+
+-- 9. Puestos (código y nombre) ocupados (actualmente o en sus puestos anteriores) por el empleado con código 101.
+πCodT, NomT (Trabajo⨝(πCodT σCodE=101 Historia))
+
+-- 10. Nombre del empleado junto al nombre del trabajo que realiza. Se deben incluir todos los empleados aun cuando
+sean empleados recién contratados (no se los haya asignado aún a ningún departamento o trabajo).
+π NomE,Ap,NomT(Emp⟕Trabajo)
+si pidiera del departamento seria:
+π NomE,Ap,NomT,CodD((Emp⟕Trabajo)⟕Dep)
+
+-- 11. Nombre de los trabajos realizados en todos los departamentos.
+πNomT(Trabajo⨝(πCodT,CodD Historia ÷ πCodD Dep))
+
+-- 12. Trabajos (todos sus datos) que se realizan en todos los departamentos ubicados en Toronto (ciudad).
+Trabajo⨝(πCodT,CodD Historia ÷ πCodD (Dep⨝ πLocalidadId σCiudad='Toronto' Localidad))

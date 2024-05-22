@@ -1,0 +1,17 @@
+-- 1. Docentes (todos sus datos) que siempre dirigieron tesis dentro del área de Base de Datos.
+Docente ⨝ πCuil(Dirige ⨝ (πNroT σAreaC= 'Base de Datos' Tesis))
+
+-- 2. Docentes (todos sus datos) que dirigieron (en el rol de director, no de codirector) más de una tesis.
+Docente ⨝ (πCuil σRol='director'Dirige - πCuil σRol='codirector'Dirige)
+
+-- 3. Alumnos (todos sus datos) que todavía no comenzaron su tesis.
+
+
+-- 4. Alumnos (todos sus datos) que ya comenzaron su tesis, y que son docentes.
+Alumno⨝ (πCuil Docente ⨝ (πCuil ρCuil←CuilA Tesis))
+
+-- 5. Docentes (Cuil y nombre y apellido) que han intervenido (como directores o codirectores) en todas las tesis del área Base de Datos.
+πCuil, NyAp (Docente ⨝ (πCuil σRol='director' ∨ Rol='codirector'(Dirige ⨝ (πNroT σAreaC= 'Base de Datos' Tesis))))
+
+-- 6. Docentes (Cuil y nombre y apellido) que han actuado como codirectores de tesis.
+πCuil, NyAp (Docente ⨝ (πCuil σRol='codirector'Dirige))

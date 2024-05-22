@@ -1,0 +1,101 @@
+-- 1. Correo y nombre de todas las personas.
+
+π Correo, Nom (PERS)
+
+-- 2. Nombre de los cursos.
+
+π Nom (CURSO)
+
+-- 3.Cursos (todos los datos) cuya carga horaria sea superior a las 40 horas reloj.
+
+π Nom, Ch (σ Ch > 40 (CURSO))
+-- tambien puede colocarse solo la seleccion
+σ Ch > 40 (CURSO)
+-- 4.Cursos (todos los datos) cuya carga horaria esta entre las 40 y 43 horas reloj.
+
+π Nom, Ch (σ Ch > 40 and Ch ≤ 43 (CURSO))
+
+-- no es necesario la proyeccion por que no me pide excluir datos por lo que se puede
+-- colocar sin la proyeccion
+
+-- 5.Renombrar el atributo “Nom” dentro de la tabla “Curso” por el atributo “nombre_curso” y obtener el listado de los cursos (nombre) junto a los temas que se imparten.
+π nombre_curso, Tema (ρ nombre_curso←Nom (CURSO ⨝ TEMAS))
+
+
+-- 6. Temas que se incluyen en todos los cursos.
+(πTema, Nom TEMAS) ÷ π Nom CURSO
+
+-- 7. Docentes (correo y nombre) que dictan cursos.
+π Nom, Correo (PERS⨝((π Correo DICTA) ∩ (πCorreo PERS)))
+-- OTRA FORMA DE HACERLO
+πNom,Correo(PERS⨝ πCorreo(DICTA⨝CURSO))
+
+-- 8. Listado de los cursos (nombre) junto a los datos del docente que los dicta.
+PERS⨝(ρ NomC←Nom DICTA)
+
+-- 9. Docentes (todos los datos) que dictan los cursos “Python I”.
+πCorreo, NomU, Nom(PERS⨝(πCorreo σNom = 'Python I' DICTA))
+
+-- 10. Listado de docentes (correo y nombre) que dictan el curso “Python I” y/o “Python II”
+πCorreo, NomU, Nom(PERS⨝(πCorreo σNom = 'Python I'∨ Nom = 'Python II'DICTA))
+
+-- 11. Docentes (todos los datos) que dictan los cursos “Python I” y “Python II”.
+πCorreo, NomU, Nom(PERS⨝(πCorreo σNom = 'Python I' DICTA))∩ πCorreo, NomU, Nom(PERS⨝(πCorreo σNom = 'Python II' DICTA))
+
+-- 12. Docentes (todos los datos) que cursaron algún curso de verano.
+
+πCorreo, NomU, Nom(PERS⨝(πCorreo INSC⨝ (πCorreo DICTA)))
+
+-- 13. Alumnos (todos los datos) que se inscribieron en el curso “Kotlin I”.
+πCorreo, NomU, Nom(PERS⨝(πCorreo σNom = 'Kotlin I' INSC))
+
+-- 14. Alumnos (todos los datos) que se inscribieron en el curso “Kotlin II”.
+INSC
+πCorreo, NomU, Nom(PERS⨝(πCorreo σNom = 'Kotlin II' INSC))
+
+-- 15. Listado de alumnos (correo) que se inscribieron tanto en el curso “Kotlin I” como “Kotlin II”.
+πCorreo, NomU, Nom(PERS⨝(πCorreo σNom = 'Kotlin I' INSC))∩
+πCorreo, NomU, Nom(PERS⨝(πCorreo σNom = 'Kotlin II' INSC))
+
+-- 16. Alumnos (todos los datos) que aprobaron el curso “Python I” (se aprueba con nota mayor o igual a 7).
+
+PERS⨝(πCorreo σNom = 'Python I' ∧ Nota ≥ 7 INSC)
+
+-- 17. Alumnos (todos los datos) que aprobaron el curso “Python II” (se aprueba con nota mayor o igual a 7).
+
+PERS⨝(πCorreo σNom = 'Python II' ∧ Nota ≥ 7 INSC)
+
+-- 18.  Alumnos (todos los datos) que aprobaron el curso “Python I” y “Python II”.
+(PERS⨝(πCorreo σNom = 'Python I' ∧ Nota ≥ 7 INSC))∩ (PERS⨝(πCorreo σNom = 'Python II' ∧ Nota ≥ 7 INSC))
+
+-- 19. Alumnos (Correo) que se inscribieron en más de un curso de verano.
+-- CORREGIDO: 'mas de un' es un indicio de un producto cartesiano y se hace con la misma tabla.
+π X.Correo(σ INSC.Correo=X.Correo∧INSC.Nom≠X.Nom (ρ X (INSC)⨯INSC))
+
+-- 20. Docentes (todos los datos) que dictan más de un curso cuya carga horaria sea inferior a 30 horas reloj.
+πCorreo, NomU, Nom(PERS⨝(πCorreo (DICTA⨝(πNom (σCh < 30 CURSO)))))
+
+-- 21. Pares de alumnos (correo) que cursaron los mismos cursos.
+INSC2 = ρ INSC2 INSC 
+A = (INSC ⨝ INSC.Correo ≠ INSC2.Correo ∧ 
+INSC.Nom = INSC2.Nom INSC2)
+π INSC.Correo, INSC2.Correo A
+
+M:
+A1 = π Correo,Nom (ρ A1(INSC))
+A2 = π Correo,Nom (ρ A2(INSC))
+π A1.Correo,A2.Correo (A1 ⨝ A1.Nom=A2.Nom ∧ A1.Correo<>A2.Correo A2)
+
+-- 22. Pares de alumnos que cursaron los mismos cursos con distinto profesor.
+
+INSC2 = ρ INSC2 INSC 
+A = (INSC ⨝ INSC.Correo ≠ INSC2.Correo ∧ 
+INSC.Nom = INSC2.Nom ∧
+ INSC.CorreoD ≠ INSC2.CorreoD INSC2)
+
+π INSC.Correo, INSC2.Correo A
+
+M:
+A1 = π Correo,Nom,CorreoD (ρ A1(INSC))
+A2 = π Correo,Nom,CorreoD (ρ A2(INSC))
+π A1.Correo,A2.Correo (A1 ⨝ A1.Nom=A2.Nom ∧ A1.Correo<>A2.Correo ∧ A1.CorreoD<>A2.CorreoD A2)

@@ -1,0 +1,6 @@
+decimalBin :: (Integral a)=> a-> [a]
+decimalBin n
+|n == 0 = [0]
+|n == 1 = [1]
+|n == 2 = [1,0]
+|otherwise = decimalBin (div n 2) ++ (mod n 2)

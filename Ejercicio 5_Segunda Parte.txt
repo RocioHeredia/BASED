@@ -1,0 +1,21 @@
+-- 1. Nombre y cuil de todos los clientes del banco
+πNombre,Cuil PERS
+
+-- 2. Nombre de las personas que poseen alguna cuenta corriente o caja de ahorro.
+π Nombre(PERS ⨝ πCuil1, Cuil2 CAHORRO)∪ π Nombre(PERS ⨝ π Cuil1, Cuil2 CCTES)
+
+-- 3. Cuentas corrientes que nunca generaron saldos negativos.
+πCCTES.Nro CCTES - πCCTES.Nro (σTRANSAC.Saldo < 0 (CCTES ⨝ TRANSAC))
+
+-- 4. Personas (cuil y nombre) que tienen dinero disponible (tienen saldo a favor en alguna cta. corriente y/o en alguna caja de ahorro).
+TABLA1=π Cuil1, Cuil2 σ SaldoActual > 0 CAHORRO
+TABLA2=π Cuil1,Cuil2 σ SaldoActual > 0 CCTES
+πCuil, Nombre(PERS ⨝(TABLA1∪TABLA2))
+
+-- 5. Cuentas corrientes (número y saldo) a las que se les efectuaron todos los tipos de transacción posible.
+πNro,SaldoActual (CCTES⨯(π NroCuenta, IdTipo TRANSAC ÷ π IdTipo TIPO_TRANS))
+
+-- 6. Cuentas corrientes que nunca tuvieron en algún momento su saldo en rojo, es decir, con saldo negativo
+πTRANSAC.NroCuenta  σTRANSAC.Saldo>0(TRANSAC⨝CCTES)- πTRANSAC.NroCuenta σTRANSAC.Saldo<0(TRANSAC⨝CCTES)
+
+-- 7. Personas (todos los datos) que efectuaron en más de una ocasión transacciones en sus cuentas corrientes, dejando el saldo en rojo.

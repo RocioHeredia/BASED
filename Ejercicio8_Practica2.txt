@@ -1,0 +1,5 @@
+repetidos :: (Integral a)=>[a]-> [a]
+repetidos [] = []
+repetidos (x:xs)
+| elem x xs = repetidos xs
+| otherwise = x: repetidos xs

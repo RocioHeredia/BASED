@@ -1,0 +1,70 @@
+group: geologos
+EMP = {Num, Nombre, Web
+1,'Techint', 'www.techint.com'
+2,'Barrick', 'www.barrick.com'
+3,'Acme Corporation','www.acme.com'
+4,'Global Industries','www.globalindustries.com'
+5,'Omega Group','www.omegagroup.com'
+6,'InnovateX', 'www.innovatex.com'
+7,'NeoTech Solutions', 'www.neotech.com'
+8,'Horizon Enterprises', 'www.horizonent.com'
+}
+PROY = {Cod, FechaI, FechaF, Inversion, Num, Pais
+1, '2023-01-15', '2023-06-30', 500000, 3, 'Argentina'
+2, '2022-03-20', '2022-09-15', 750000, 5, 'Chile'
+3, '2022-05-10', '2023-01-05', 1000000, 1, 'Estados Unidos'
+4, '2022-02-28', '2022-08-15', 600000, 4, 'Australia'
+5, '2022-04-10', '2022-10-20', 900000, 8, 'Canadá'
+6, '2022-06-01', '2022-12-10', 1200000, 2, 'México'
+7, '2023-08-15', '2023-02-28', 1500000, 7, 'Brasil'
+8, '2023-10-05', '2023-04-15', 1800000, 6, 'Francia'
+}
+
+GEO ={Cuil, Pais, Nombre, Apellido, FechaNac, Paisr
+123456789,'Argentina','Juan','Pérez','1985-07-10','Argentina'
+987654321,'Chile','María','González','1980-05-20','Argentina'
+456789123,'Estados Unidos','John','Smith','1976-11-15','Chile'
+135792468,'Argentina','Emily','Johnson','1988-03-25','México'
+246813579,'Canadá','Michael','Brown','1982-09-05','Canadá'
+369258147,'México','Alejandra','Martínez','1979-01-30','México'
+579314628,'Argentina','Carlos','Silva','1983-12-20','Brasil'
+468135792,'Francia','Sophie','Dubois','1975-06-12','Francia'
+456789789, 'Chile', 'Lorena', 'Fernandez','1985-02-05','Canada'
+}
+
+TRA = {Cod, Cuil ,Pais, Fecha
+1, 123456789, 'Argentina', '2022-02-01'
+2, 987654321, 'Chile', '2022-04-10'
+3, 456789123, 'Estados Unidos', '2022-06-20'
+4, 135792468, 'Australia', '2022-09-15'
+5, 246813579, 'Canadá', '2023-11-05'
+6, 369258147, 'México', '2023-01-10'
+7, 579314628, 'Brasil', '2023-03-20'
+8, 468135792, 'Francia', '2023-05-05'
+1, 456789789, 'Chile', '2024-03-01'
+}
+
+
+
+-- 1. Proyectos (código, inversión) desarrollados durante el 2023 en Argentina por la empresa “Techint”.
+πCod, Inversion (σFechaI ≥'2023-01-01' ∧ FechaF≤'2023-12-31'∧ Pais='Argentina' PROY ⨝ (πNum σNombre='Techint' EMP))
+
+-- 2.Geólogos argentinos (todos los datos) que han trabajado en más de una ocasión en el mismo proyecto.
+
+
+-- 3. Geólogos que residen en el país donde nacieron.
+σ Paisr=Pais GEO
+
+-- 4. Empresas (todos los datos) donde trabajaron geólogos tanto de nacionalidad argentina como chilena.
+EMP ⨝ πNum(PROY⨝(πCod(TRA ⨝ πCuilσ Pais='Chile' ∨ Pais='Argentina' GEO)))
+
+-- 5. Proyectos (código, inversión y país) donde trabajaron únicamente extranjeros.
+πCod,Inversion,Pais (PROY ⨝ πCod (TRA ⨝ πCuil σPais≠'Argentina' GEO))
+
+-- 6. Geólogos (todos los datos) que trabajaron en todos los proyectos de la empresa “Barrick”.
+GEO ⨝ (πCuil σCod=Num (TRA ⨝ σNombre='Barrick' EMP))
+
+-- 7. Geólogos (todos los datos) argentinos y/o chilenos que trabajaron en proyectos de la empresa “Techint”.
+σPais='Argentina' ∨ Pais='Chile' GEO ⨝(πCuil σCod=Num (TRA ⨝ σNombre='Techint' EMP))
+
+-- 8. Geólogos (todos los datos) argentinos y/o chilenos que trabajaron únicamente en proyectos de la empresa “Techint”.

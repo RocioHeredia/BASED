@@ -1,0 +1,26 @@
+-- 1. Programadores (todos sus datos) que han participado en el proyecto código ‘P22-11’ con más de 10 horas.
+EMPLEADOS⨝(πCuil σ Rol= 'programador' ∧Codp='P22-11' ∧ CantHoras > 10  TRABAJA)
+
+-- 2. Personas (todos sus datos) que han trabajado como analistas y diseñadores en el año 2023, independientemente sea en el mismo proyecto o no.
+EMPLEADOS ⨝ ((πCuil σRol='analista' ∧ FDesde ≥ date('2023-01-01') ∧ FHasta ≤ date('2023-12-31') TRABAJA) ∪ (πCuil σRol='diseñador' ∧ FDesde ≥ date('2023-01-01') ∧ FHasta ≤ date('2023-12-31') TRABAJA))
+
+-- 3. Personas (todos sus datos) que siempre han participado como líderes de proyectos.
+ πLider PROYECTOS - πCuil EMPLEADOS
+
+-- 4. Personas (cuil) que han participado en todos los proyectos desarrollados para ‘OSSE’ (cliente).
+πCuil (TRABAJA⨝ πCodp σCliente= 'OSSE'PROYECTOS)
+-- otra forma 
+πCuil, Codp TRABAJA ÷ πCodp σCliente= 'OSSE'PROYECTOS
+-- 5. Personas (cuil) que han participado con roles diferentes en el mismo proyecto (no considerar los líderes).
+π TRABAJA.Cuil (σ TRABAJA.Codp = X.Codp ∧ TRABAJA.Cuil = X.Cuil ∧ TRABAJA.Rol ≠ X.Rol (ρ X TRABAJA ⨯ TRABAJA))
+
+-- 6. Personas (cuil) que han participado con roles diferentes en el mismo proyecto (considerar los líderes).
+π TRABAJA.Cuil (σ TRABAJA.Codp = X.Codp ∧ TRABAJA.Cuil = X.Cuil ∧ TRABAJA.Rol ≠ X.Rol (ρ X TRABAJA ⨯ TRABAJA))∪  πLider PROYECTOS
+
+-- 7. Equipo (cuil y nombre) de trabajo del proyecto ‘P22-05’ (debe incluirse el líder).
+
+πCuil, Nom (EMPLEADOS⨝((π Cuil σCodp='P22-05' TRABAJA)∪ (π Lider σCodp='P22-05' PROYECTOS)))
+
+-- 8. Personas (todos sus datos) que han trabajado como analistas y diseñadores en el año 2023, en el mismo proyecto.
+
+EMPLEADOS ⨝ ( πCuil(σRol='analista' ∧ FDesde ≥ date('2023-01-01') ∧ FHasta ≤ date('2023-12-31') TRABAJA))  ⨝ (πCuil(σRol='diseñador' ∧ FDesde ≥ date('2023-01-01') ∧ FHasta ≤ date('2023-12-31') TRABAJA))

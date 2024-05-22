@@ -1,0 +1,141 @@
+group: Alumnos de las Carrera LCC
+ALU={Cuil, NomAlu, Dir, Tel
+20355678901, 'Juan Pérez', 'Calle Falsa 123', 123456789
+30456789012, 'María López', 'Av. Libertador 456', 987654321
+40567890123, 'Carlos Gómez', 'Paseo Colón 789', 741852963
+50678901234, 'Ana Rodríguez', 'Av. San Martín 321', 369258147
+60789012345, 'Diego Martínez', 'Calle Real 789', 159753468
+70890123456, 'Laura Sánchez', 'Av. Belgrano 456', 258963147
+80901234567,'Pablo González','Paseo de la Reforma', 369147258
+91012345678, 'Sofía Fernández','Calle Provenza 789', 147258369
+10123456789, 'Martín Díaz', 'Av. Corrientes 456', 258369147
+11234567890, 'Julia López', 'Calle del Sol 123', 369147258
+12345678901, 'Lucas Rodríguez', 'Av. Colón 789', 147258369
+23456789012, 'Valentina García', 'Calle Mayor 456', 258369147
+34567890123, 'Nicolás Martínez', 'Av. Juárez 123', 369147258
+45678901234,'Camila Sánchez', 'Calle Nueva 789', 147258369
+56789012345,'Mateo González', 'Av.Independencia 456', 258369147
+67890123456, 'Renata Fernández', 'Calle Real 123', 369147258
+}
+
+MAT = {CodM, NomM, Despliegue, Anio
+101, 'Bases de Datos', '1er Cuatrimestre', Tercero
+102, 'Inglés I', '2do Cuatrimestre', Segundo
+103, 'Algoritmos y Resolución de Problemas', 'Anual', Primero
+104, 'Programación Procedural', '1er Cuatrimestre', Primero
+105, 'Programación Orientada a Objetos', '2do Cuatrimestre', Segundo
+106, 'Sistemas Operativos', 'Anual', Primero
+107, 'Redes', '2do Cuatrimestre', Tercero
+108, 'Matemática Básica', '1er Cuatrimestre', Primero
+109, 'Bases de Datos Avanzadas', 'Anual', Optativa
+110, 'Estructura de Datos', '2do Cuatrimestre', Segundo
+111, 'Seguridad Informática', '2do Cuatrimestre', Optativa
+112, 'Desarrollo Web', 'Anual', Primero
+113, 'Inteligencia Artificial', '1er Cuatrimestre', Cuarto
+114, 'Análisis y Diseño de Algoritmos', '2do Cuatrimestre', Quinto
+115, 'Análisis Matemático I', '1er Cuatrimestre', Segundo
+}
+
+CORRE = {CodM, CodMc
+102, 101
+103, 102
+104, 103
+105, 104
+106, 105
+107, 106
+108, 107
+109, 108
+110, 109
+111, 110
+112, 111
+113, 112
+114, 113
+115, 114
+101, 115
+}
+INSC = {Cuil, CodM, Fecha
+20355678901, 101, '2020-05-15'
+30456789012, 102, '2022-06-16'
+40567890123, 103, '2023-07-17'
+50678901234, 104, '2019-08-18'
+60789012345, 105, '2020-09-19'
+70890123456, 106, '2021-10-20'
+80901234567, 107, '2017-11-21'
+91012345678, 108, '2024-12-22'
+10123456789, 109, '2020-01-23'
+11234567890, 110, '2021-02-24'
+12345678901, 111, '2019-03-25'
+23456789012, 112, '2024-04-26'
+34567890123, 113, '2020-05-27'
+45678901234, 114, '2023-06-28'
+56789012345, 115, '2023-07-29'
+
+}
+BOL= {Cuil, CodM, Fecha
+20355678901, 101, '2020-07-20'
+30456789012, 105, '2022-08-21'
+50678901234, 104, '2019-10-23'
+91012345678, 108, '2024-02-27'
+10123456789, 109, '2020-03-28'
+23456789012, 112, '2024-06-01'
+34567890123, 110, '2020-07-02'
+45678901234, 114, '2023-08-03'
+56789012345, 115, '2023-09-04'
+
+}
+EXA = {Cuil, CodM, Fecha, Nota
+20355678901, 101, '2020-05-15', 7
+30456789012, 102, '2021-06-16', 8
+40567890123, 103, '2023-07-17', 3
+50678901234, 104, '2024-08-18', 8
+60789012345, 105, '2020-09-19', 7
+40567890123, 103, '2023-10-07', 6
+70890123456, 106, '2021-10-20', 8
+30456789012, 102, '2021-06-16', 2
+80901234567, 107, '2023-11-21', 6
+91012345678, 108, '2024-12-22', 7
+10123456789, 109, '2020-01-23', 7
+11234567890, 110, '2021-02-24', 8
+12345678901, 111, '2023-03-25', 6
+91012345678, 108, '2024-12-22', 2
+23456789012, 112, '2024-04-26', 8
+34567890123, 113, '2020-05-27', 7
+23456789012, 112, '2024-04-26', 2
+45678901234, 114, '2021-06-28', 6
+56789012345, 115, '2023-07-29', 8
+}
+
+-- EXPRESIONES
+-- 1. Alumnos (todos los datos) que nunca tuvieron aplazos.
+ALU - (ALU ⨝ πCuil σNota<= 4 EXA)
+
+-- 2. Alumnos (nombre) que han rendido (aprobado) Bases de Datos y Bases de Datos Avanzadas.
+ALU ⨝ πCuil(EXA ⨝(π CodM σNomM= 'Bases de Datos' MAT ∪ π CodM σNomM= 'Bases de Datos Avanzadas' MAT))
+
+-- 3. Materias (todos los datos) que tienen algún inscripto en el 2023.
+MAT⨝(πCodM σFecha >= '2023-01-01' ∧ Fecha <= '2023-12-31' INSC)
+
+-- 4. Exámenes (nombre del alumno, nombre de la materia, fecha y nota) rendidos en forma regular
+TABLARE = (EXA⨝ πCuil, CodM BOL)
+πNomAlu, NomM, Fecha, Nota(MAT⨝TABLARE⨝ALU)
+
+-- 5. Alumnos (cuil y nombre) que han sacado boleta de todas las materias de primer y segundo año.
+π Cuil, NomAlu ALU ⨝ (πCuil,CodM BOL÷((πCodM σAnio= 'Primero'MAT)∪(πCodM σAnio= 'Segundo'MAT)))
+
+-- 6. Alumnos (cuil y nombre) que están inscriptos en materias de distintos años.
+
+
+-- 7. Alumnos que han rendido más de una vez la misma materia.
+ALU ⨝ πEXA.Cuil(σEXA.Cuil = NUEVA.Cuil ∧ EXA.CodM = NUEVA.CodM ∧ EXA.Fecha != NUEVA.Fecha ∧ EXA.Nota != NUEVA.Nota (ρNUEVA EXA ⨯ EXA))
+
+-- 8. Nombre de materias y sus correlativas (nombre también).
+
+
+-- 9. Alumnos (todos sus datos personales) que están en condiciones de rendir Bases de Datos; es decir, tener rendidas sus correlativas además de haber obtenido la boleta.
+πCuil,NomAlu,Dir,Tel (ALU⨝((BOL ⨝ π CodM σNomM='Bases de Datos' MAT)⨝ (πCuil σEXA.CodM = CORRE.CodMc ∧ EXA.Nota ≥ 4 (EXA ⨝ πCodMc (CORRE ⨝ π CodM σNomM='Bases de Datos' MAT)))))
+
+-- 10. Exámenes libres (todos los datos), es decir, que se han rendido sin haber sacado la boleta correspondiente.
+(EXA ⨝(πCodM EXA- π CodM BOL))
+
+-- 11. Alumnos (nombre) que están al día; es decir, han rendido todas las materias para las que tienen boleta.
+ALU⨝πCuil(EXA⨝πCuil, CodM (BOL⨝MAT))

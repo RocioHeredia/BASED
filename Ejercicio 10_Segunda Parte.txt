@@ -1,0 +1,17 @@
+-- 1. Usuarios argentinos (todos los datos) que se encuentran suscriptos a canales de Chile, es decir, creados por un chileno.
+Us⨝(πCorreo (Susc ⨝ πIdCanal (Canal ⨝ πCorreo σPais='Chile' Us)))
+
+-- 2. Canales (todos sus datos) que tienen más de un video con al menos 2000 me gusta.
+Canal ⨝ (πIdCanal(SeEnc ⨝ πIdVideo σCantMg≥2000 V))
+
+-- 3. Vídeos (todos sus datos) que se encuentran publicados en todos los canales creados en el año 2021.
+V ⨝ (πIdVideo (SeEnc ⨝ (πIdCanalσFechaC≥date('2021-01-01') ∧ FechaC≤date('2021-12-31')Canal)))
+
+-- 4. Canales (id-canal) que tengan únicamente suscriptores argentinos.
+πIdCanal(Susc ⨝ πCorreo σPais='Argentina' Us)
+
+-- 5. Conjunto de todos los usuarios (correo) de los países de la región extremo sur (Argentina y Chile).
+πCorreo σPais='Argentina' Us ∪ πCorreo σPais='Chile' Us
+
+-- 6. Canales (id-canal y apellido del creador) que tiene suscriptores de Argentina y Uruguay.
+πIdCanal, Correo(Canal⨝((πIdCanal, Correo Susc ⨝ πCorreo σPais='Argentina' Us)∪( πIdCanal, Correo Susc ⨝ πCorreo σPais='Uruguay' Us)))
