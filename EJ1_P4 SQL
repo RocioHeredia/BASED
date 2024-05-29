@@ -49,3 +49,6 @@ INSERT INTO Ciu(ciudad_id, ciudad_nom)VALUES (4,'Jerusalén');
 
 --ELIMINAR
 DELETE FROM Ciu WHERE ciudad_id=1;
+
+-- PARA ELIMINAR TABLAS:
+DROP TABLE PERS
