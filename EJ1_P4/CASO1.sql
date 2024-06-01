@@ -159,3 +159,4 @@ SELECT correo, nomu,nom FROM pers WHERE nom='Rosa';
 
 -- 16.Cursos que tienen una carga horaria superior a la del curso “Kotlin I”, 
 -- ordenados descendentemente por cantidad de horas
+SELECT nom FROM CURSO WHERE ch>(SELECT ch FROM CURSO WHERE nom='Kotlin I') ORDER BY ch DESC;
