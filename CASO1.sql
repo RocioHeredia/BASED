@@ -208,6 +208,6 @@ SELECT pers.correo FROM PERS JOIN INSC ON INSC.correo=PERS.correo WHERE INSC.nom
 SELECT correo FROM INSC GROUP BY correo HAVING COUNT(*)>1
 
 -- 32. Docentes (correo) que dictan más de un curso.
-SELECT correod FROM INSC GROUP BY correod HAVING COUNT(*)>1
+SELECT correo FROM DICTA GROUP BY correo HAVING COUNT(*)>1
 
 -- 33. Docentes (todos los datos) que dictan más de un curso cuya carga horaria sea inferior a 30 horas reloj.
