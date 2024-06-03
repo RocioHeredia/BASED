@@ -190,7 +190,7 @@ SELECT pers.correo, pers.nomu, pers.nom FROM PERS JOIN DICTA ON DICTA.correo=PER
 SELECT pers.correo, pers.nomu, pers.nom FROM PERS JOIN DICTA ON DICTA.correo=PERS.correo WHERE DICTA.nom='Python I' INTERSECT SELECT pers.correo, pers.nomu, pers.nom FROM PERS JOIN DICTA ON DICTA.correo=PERS.correo WHERE DICTA.nom='Python II'
 
 -- 26. Docentes (todos los datos) que cursaron algún curso de verano.
-
+SELECT CORREO, NOMU, NOM FROM PERS NATURAL JOIN (SELECT distinct CORREO FROM DICTA INTERSECT SELECT distinct CORREO FROM INSC)
 
 --27. Alumnos (todos los datos) que se inscribieron en el curso “Kotlin I”.
 SELECT pers.correo, pers.nomu, pers.nom FROM PERS JOIN INSC ON INSC.correo= PERS.correo WHERE INSC.nom='Kotlin I'
