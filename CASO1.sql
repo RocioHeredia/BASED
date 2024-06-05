@@ -220,3 +220,61 @@ WHERE correo IN (SELECT correo
 	WHERE CURSO.ch<30 
 	GROUP BY correo 
 	HAVING COUNT(*)>1)
+
+--34.  Alumnos (correo) que cursaron los mismos cursos.
+SELECT INSC.CORREO 
+FROM INSC, INSC AS AUX
+WHERE INSC.CORREO!=AUX.CORREO AND INSC.NOM=AUX.NOM
+
+--35.  Pares de Alumnos (todos los datos) que cursaron los mismos cursos.
+SELECT distinct INSC.correo, AUX.correo
+FROM INSC, INSC AS AUX
+WHERE INSC.CORREO!=AUX.CORREO AND INSC.NOM=AUX.NOM
+
+--36. Pares de Alumnos que cursaron los mismos cursos con distinto profesor.
+SELECT distinct INSC.correo, AUX.correo
+FROM INSC, INSC AS AUX
+WHERE INSC.CORREO!=AUX.CORREO AND INSC.NOM=AUX.NOM AND INSC.CORREOD!=AUX.CORREOD
+
+--37.Alumnos (todos los datos) que se inscribieron en todos los cursos de verano.
+SELECT * FROM PERS 
+WHERE NOT EXISTS (SELECT *
+FROM CURSO WHERE NOT EXISTS (SELECT * 
+FROM INSC WHERE INSC.correo=PERS.correo 
+AND INSC.nom=CURSO.nom))
+
+--38. Alumnos (todos los datos) que se inscribieron en todos los 
+--cursos que dicta el profesor con correo “pedroibañez@yahoo.com.ar”
+SELECT PERS.* FROM PERS 
+JOIN (SELECT *
+FROM INSC WHERE NOM IN (SELECT NOM
+FROM DICTA 
+WHERE CORREO='pedroibañez@yahoo.com.ar')) AS AUX ON PERS.CORREO=AUX.CORREO
+
+--39. Nombre/s de los cursos que tienen la mayor carga horaria
+SELECT nom 
+FROM CURSO 
+WHERE ch=(SELECT max(ch)FROM CURSO)
+
+--40.Especifique la Vista “Cursoscortos” que tenga los 
+--siguientes atributos nombre, carga horaria. Los cursos cortos son 
+--aquellos cuya carga horaria es inferior a las 40 horas.
+CREATE VIEW Cursoscortos AS (SELECT CURSO.* 
+FROM CURSO 
+NATURAL JOIN (SELECT ch 
+FROM CURSO WHERE ch<40))
+
+--41.Muestre los datos contenidos en la vista, ordenados según el nombre.
+SELECT * 
+FROM Cursoscortos 
+ORDER BY NOM ASC
+
+--42. Especifique la Vista (Alumnos_python1) que contenga 
+--los alumnos que se inscribieron en el curso “PYTHON I”
+--correo, nombre de usuario y nombre).
+CREATE VIEW Alumnos_python1 AS (SELECT PERS.*
+FROM PERS 
+JOIN (SELECT CORREO 
+FROM INSC 
+WHERE NOM='Python I') AS AUX 
+ON PERS.CORREO=AUX.CORREO)
