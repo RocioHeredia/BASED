@@ -210,4 +210,13 @@ SELECT correo FROM INSC GROUP BY correo HAVING COUNT(*)>1
 -- 32. Docentes (correo) que dictan más de un curso.
 SELECT correo FROM DICTA GROUP BY correo HAVING COUNT(*)>1
 
--- 33. Docentes (todos los datos) que dictan más de un curso cuya carga horaria sea inferior a 30 horas reloj.
+-- 33. Docentes (todos los datos) que dictan más de un curso cuya carga horaria sea 
+--inferior a 30 horas reloj.
+SELECT pers.* 
+FROM PERS 
+WHERE correo IN (SELECT correo
+	FROM DICTA 
+ 	NATURAL JOIN CURSO 
+	WHERE CURSO.ch<30 
+	GROUP BY correo 
+	HAVING COUNT(*)>1)
