@@ -89,4 +89,104 @@ SELECT descrip FROM materiales JOIN pedidos ON materiales.cm = pedidos.cm
 --2.Muestre para cada obra (indicando descripción) todos los 
 --materiales solicitados (descripción). Deben informarse todas 
 --las obras, más allá que aún no tenga materiales pedidos.
+SELECT obras.descrip, materiales.descrip
+	FROM  obras 
+	LEFT OUTER JOIN pedidos ON obras.co=pedidos.co 
+	LEFT OUTER JOIN materiales ON pedidos.cm=materiales.cm 
 
+-- 3.Muestre la cantidad total de bolsas de cal que han sido 
+--pedidas a la ferretería MR S.A
+SELECT sum(cant) 
+	FROM PEDIDOS 
+	WHERE (cm=(SELECT cm
+	FROM materiales
+	WHERE descrip='Cal') and cuit=(SELECT cuit 
+	FROM ferreterias
+	WHERE nom='MR S.A'))
+
+--4. Muestre la cantidad total de obras que han 
+--pedido materiales a la ferretería MR S.A.
+SELECT COUNT(distinct co) 
+	FROM PEDIDOS 
+	WHERE cuit=(SELECT cuit 
+	FROM ferreterias
+	WHERE nom='MR S.A')
+
+--5. Muestre, para cada material pedido a alguna ferretería, 
+--el código de material, código de obra y la cantidad total pedida 
+--(independientemente de la ferretería).
+SELECT pedidos.cm, pedidos.co, sum(cant) FROM pedidos GROUP BY cm, co 
+
+--6.Muestre la descripción de materiales pedidos para alguna 
+--obra en una cantidad promedio mayor a 320 unidades.
+SELECT m.descrip, p.co, AVG(cant) 
+	FROM pedidos p 
+	JOIN materiales m ON p.cm=m.cm 
+	GROUP BY m.cm, p.co HAVING AVG(cant)>320
+
+--7. Muestre el nombre del material menos pedido (en cantidad total).
+SELECT cm, sum(cant)
+	FROM pedidos 
+	GROUP BY cm
+	ORDER BY sum(cant) ASC
+	LIMIT 1
+
+--8. Muestre la descripción de las obras que no han utilizado pintura.
+SELECT obras.descrip
+FROM obras
+WHERE NOT EXISTS(
+	SELECT *
+	FROM pedidos
+	JOIN materiales ON pedidos.cm=materiales.cm
+	WHERE pedidos.co=obras.co AND materiales.descrip='Pintura')
+	
+--9. Muestre el nombre de las obras abastecidas totalmente por la ferretería MR S.A.
+
+
+--10.Muestre el nombre de los materiales que han sido pedidos para todas las obras realizadas.
+SELECT m.descrip 
+FROM materiales m 
+WHERE NOT EXISTS(
+	SELECT * 
+	FROM obras o 
+	WHERE NOT EXISTS(
+	SELECT * 
+	FROM pedidos p 
+	WHERE p.co=o.co AND p.cm=m.cm))
+
+--11. Actualice el teléfono de la Ferretería San Ignacio por el número 4312548.
+UPDATE ferreterias 
+SET tel=4312548 
+WHERE nom='San Ignacio'
+
+--12.Elimine el Material con descripción Cemento Avellaneda.
+DELETE 
+FROM materiales 
+WHERE descrip='Cemento Avellaneda'
+
+--13. Especifique la Vista “ObrasCuyoNorte” que contenga Co 
+--(código de la obra), Direc(dirección de la obra) y EmpCon 
+--(empresa constructora) de las obras ubicadas en la zona Santa Lucia
+CREATE VIEW ObrasCuyoNorte AS
+SELECT co, direc, empcon 
+FROM obras 
+WHERE zona='Santa Lucia'
+
+--14.Especifique la Vista “ObrasMat” que contenga Obra 
+--(código de la obra), Empresa (empresa constructora), Material 
+--(descripción del material) y CantMat (cantidad de materiales pedidos).
+CREATE VIEW ObrasMat AS
+SELECT o.co AS Obra, o.empcon AS Empresa, m.descrip AS Material, p.cant  AS CantMat
+FROM obras o
+JOIN pedidos p ON p.co=o.co 
+JOIN materiales m ON m.cm=p.cm
+
+--a)Muestre los datos contenidos en la vista, 
+--ordenados según obra (descendente) y material (ascendente).
+SELECT * FROM ObrasMat ORDER BY obra DESC, material ASC
+
+--b. Actualice la cantidad de materiales pedidos de las 
+--obras incrementándolas en 100.
+SELECT * FROM OBRASMAT
+UPDATE obrasmat 
+SET cantmat = cantmat + 100
