@@ -155,8 +155,138 @@ SELECT nom FROM CURSO ORDER BY nom ASC;
 SELECT nom FROM CURSO WHERE ch>(SELECT ch FROM CURSO WHERE nom IN (SELECT nom FROM DICTA WHERE correo='pedroibañez@yahoo.com.ar'))
 
 -- 15. Personas, docentes o alumnos(todos sus datos) que se llama Rosa
-SELECT correo, nomu,nom FROM pers WHERE nom='Rosa';
+SELECT * FROM pers WHERE nom='Rosa'
 
 -- 16.Cursos que tienen una carga horaria superior a la del curso “Kotlin I”, 
 -- ordenados descendentemente por cantidad de horas
-SELECT nom FROM CURSO WHERE ch>(SELECT ch FROM CURSO WHERE nom='Kotlin I') ORDER BY ch DESC;
+(SELECT nom FROM CURSO WHERE ch>(SELECT ch FROM CURSO WHERE nom='Kotlin I')) ORDER BY ch DESC;
+
+-- 17.  Cursos (todos los datos) cuya carga horaria sea superior a las 40 horas reloj.
+SELECT * FROM CURSO WHERE ch>40
+
+-- 18. Cursos (todos los datos) cuya carga horaria se encuentre entre 40 y 45 horas reloj.
+SELECT * FROM CURSO WHERE ch>40 and ch<45
+
+-- 19.Docentes (correo y nombre) que dictan cursos.
+SELECT correo, nom FROM PERS WHERE correo IN (SELECT correo FROM DICTA);
+--OTRA FORMA:
+SELECT NOM, CORREO FROM PERS NATURAL JOIN (SELECT distinct CORREO FROM DICTA)
+
+-- 20. Listado de los cursos (nombre) junto a los datos del docente que los dicta.
+SELECT curso.nom, pers.correo, pers.nomu, pers.nom  FROM DICTA JOIN CURSO ON CURSO.nom=DICTA.nom JOIN pers on pers.correo= DICTA.correo;
+
+--21. Obtenga el curso (todos los datos) junto a los datos de los alumnos inscriptos. Se deben incluir todos los cursos
+--registrados más allá que no tengan alumnos inscriptos.. (Usar OUTER JOIN)
+SELECT curso.nom, curso.ch, pers.correo, pers.nomu, pers.nom FROM INSC RIGHT OUTER JOIN CURSO ON CURSO.nom=INSC.nom LEFT OUTER JOIN pers ON pers.correo=INSC.correo
+
+--22. Docentes (todos los datos) que dictan los cursos “Python I”
+SELECT pers.correo, pers.nomu, pers.nom FROM PERS JOIN DICTA ON DICTA.correo=PERS.correo WHERE DICTA.nom='Python I'
+
+--23. Docentes (todos los datos) que dictan los cursos “Python II”.
+SELECT pers.correo, pers.nomu, pers.nom FROM PERS JOIN DICTA ON DICTA.correo=PERS.correo WHERE DICTA.nom='Python II'
+
+--24. Listado de docentes (correo) que dictan el curso “Python I” y/o “Python II”.
+SELECT pers.correo FROM PERS JOIN DICTA ON DICTA.correo=PERS.correo WHERE DICTA.nom='Python I' UNION SELECT pers.correo FROM PERS JOIN DICTA ON DICTA.correo=PERS.correo WHERE DICTA.nom='Python II'
+
+-- 25. Docentes (correo) que dictan los cursos “Python I” y “Python II”.
+SELECT pers.correo FROM PERS JOIN DICTA ON DICTA.correo=PERS.correo WHERE DICTA.nom='Python I' INTERSECT SELECT pers.correo FROM PERS JOIN DICTA ON DICTA.correo=PERS.correo WHERE DICTA.nom='Python II'
+
+-- 26. Docentes (todos los datos) que cursaron algún curso de verano.
+SELECT * FROM PERS NATURAL JOIN (SELECT distinct CORREO FROM DICTA INTERSECT SELECT distinct CORREO FROM INSC)
+
+--27. Alumnos (todos los datos) que se inscribieron en el curso “Kotlin I”.
+SELECT pers.correo, pers.nomu, pers.nom FROM PERS JOIN INSC ON INSC.correo= PERS.correo WHERE INSC.nom='Kotlin I'
+
+-- 28. Alumnos (todos los datos) que se inscribieron en el curso “Kotlin II”.
+SELECT pers.correo, pers.nomu, pers.nom FROM PERS JOIN INSC ON INSC.correo= PERS.correo WHERE INSC.nom='Kotlin II'
+
+-- 29. Listado de alumnos (correo) que se inscribieron tanto en el curso “Kotlin I” como “Kotlin II”.
+SELECT pers.correo FROM PERS JOIN INSC ON INSC.correo=PERS.correo WHERE INSC.nom='Kotlin I' INTERSECT SELECT pers.correo FROM PERS JOIN INSC ON INSC.correo=PERS.correo WHERE INSC.nom='Kotlin II'
+
+-- 30. Alumnos (todos los datos) que aprobaron el curso “Python I” y “Python II”.
+(SELECT pers.correo, pers.nomu, pers.nom FROM PERS JOIN INSC ON INSC.correo=PERS.correo WHERE INSC.nom='Python I'and INSC.nota>=6) INTERSECT (SELECT pers.correo, pers.nomu, pers.nom FROM PERS JOIN INSC ON INSC.correo=PERS.correo WHERE INSC.nom='Python II' and INSC.nota>=6)
+
+-- 31. Alumnos (Correo) que se inscribieron en más de un curso de verano.
+SELECT correo 
+	FROM INSC 
+	GROUP BY correo 
+	HAVING COUNT(*)>1
+
+-- 32. Docentes (correo) que dictan más de un curso.
+SELECT correo 
+	FROM DICTA 
+	GROUP BY correo 
+	HAVING COUNT(*)>1
+
+-- 33. Docentes (todos los datos) que dictan más de un curso cuya carga horaria sea 
+--inferior a 30 horas reloj.
+SELECT pers.* 
+FROM PERS 
+WHERE correo IN (SELECT correo
+	FROM DICTA 
+ 	NATURAL JOIN CURSO 
+	WHERE CURSO.ch<30 
+	GROUP BY correo 
+	HAVING COUNT(*)>1)
+
+--34.  Alumnos (correo) que cursaron los mismos cursos.
+SELECT INSC.CORREO 
+FROM INSC, INSC AS AUX
+WHERE INSC.CORREO!=AUX.CORREO AND INSC.NOM=AUX.NOM
+
+--35.  Pares de Alumnos (todos los datos) que cursaron los mismos cursos.
+SELECT distinct INSC.correo, AUX.correo
+FROM INSC, INSC AS AUX
+WHERE INSC.CORREO!=AUX.CORREO AND INSC.NOM=AUX.NOM
+
+--36. Pares de Alumnos que cursaron los mismos cursos con distinto profesor.
+SELECT distinct INSC.correo, AUX.correo
+FROM INSC, INSC AS AUX
+WHERE INSC.CORREO!=AUX.CORREO AND INSC.NOM=AUX.NOM AND INSC.CORREOD!=AUX.CORREOD
+
+--37.Alumnos (todos los datos) que se inscribieron en todos los cursos de verano.
+SELECT * FROM PERS 
+WHERE NOT EXISTS (SELECT *
+FROM CURSO WHERE NOT EXISTS (SELECT * 
+FROM INSC WHERE INSC.correo=PERS.correo 
+AND INSC.nom=CURSO.nom))
+
+--38. Alumnos (todos los datos) que se inscribieron en todos los 
+--cursos que dicta el profesor con correo “pedroibañez@yahoo.com.ar”
+SELECT PERS.* FROM PERS 
+JOIN (SELECT *
+FROM INSC WHERE NOM IN (SELECT NOM
+FROM DICTA 
+WHERE CORREO='pedroibañez@yahoo.com.ar')) AS AUX ON PERS.CORREO=AUX.CORREO
+
+--39. Nombre/s de los cursos que tienen la mayor carga horaria
+SELECT nom 
+FROM CURSO 
+WHERE ch=(SELECT max(ch)FROM CURSO)
+
+--40.Especifique la Vista “Cursoscortos” que tenga los 
+--siguientes atributos nombre, carga horaria. Los cursos cortos son 
+--aquellos cuya carga horaria es inferior a las 40 horas.
+CREATE VIEW Cursoscortos AS (SELECT CURSO.* 
+FROM CURSO 
+NATURAL JOIN (SELECT ch 
+FROM CURSO WHERE ch<40))
+
+--41.Muestre los datos contenidos en la vista, ordenados según el nombre.
+SELECT * 
+FROM Cursoscortos 
+ORDER BY NOM ASC
+
+--42. Especifique la Vista (Alumnos_python1) que contenga 
+--los alumnos que se inscribieron en el curso “PYTHON I”
+--correo, nombre de usuario y nombre).
+CREATE VIEW Alumnos_python1 AS (SELECT PERS.*
+FROM PERS 
+JOIN (SELECT CORREO 
+FROM INSC 
+WHERE NOM='Python I') AS AUX 
+ON PERS.CORREO=AUX.CORREO)
+
+--43. Muestre los datos contenidos en la vista creada en el 
+--punto anterior, cuyo correo sea una cuenta de Gmail
+SELECT * FROM alumnos_python1 WHERE correo like '%@gmail.com'
