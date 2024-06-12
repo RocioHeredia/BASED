@@ -83,14 +83,14 @@ SELECT actua.nom
 
 --2.Películas (título y lema) en las que han actuado solamente 
 --personas que nacieron antes del 1970
-SELECT pe.titulo, pe.lema 
-	FROM pelicula pe
-	WHERE pe.titulo IN (SELECT distinct a.titulo
-							FROM actua a 
-							WHERE a.nom IN (SELECT p.nom 
-													FROM persona p 
-													WHERE fechanac<date('1970-01-01')))
-
+SELECT p.titulo, p.lema 
+	FROM pelicula p
+	WHERE p.titulo NOT IN(
+	SELECT a.titulo
+	FROM actua a
+	JOIN persona pe ON a.nom=pe.nom
+	WHERE pe.fechanac>=date('1970-01-01')
+	)
 --3. Personas (todos los datos) que han actuado en todas las 
 --películas dirigidas por Carrie-Anne Moss.
 SELECT p.* 
