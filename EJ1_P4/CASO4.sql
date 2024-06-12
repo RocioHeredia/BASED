@@ -74,12 +74,12 @@ Insert into Sigue values
 	 ('Al Pacino','Keanu Reeves');
 
 --1.Personas (nombre) que han actuado en más de una película estrenada en el año 1990.
-(SELECT distinct actua.nom, actua.titulo, aux.titulo
-	FROM actua, actua aux 
-	WHERE actua.nom=aux.nom and actua.titulo!=aux.titulo and actua.titulo IN 
-	(SELECT titulo 
-	FROM pelicula 
-	WHERE estreno>=date('1990-01-01') and estreno<=date('1990-12-31')))
+SELECT actua.nom 
+		FROM actua 
+		NATURAL JOIN pelicula
+		WHERE pelicula.estreno>=date('1990-01-01') and pelicula.estreno<=date('1990-12-31')
+		GROUP BY actua.nom
+		HAVING COUNT(*)>1
 
 --2.Películas (título y lema) en las que han actuado solamente 
 --personas que nacieron antes del 1970
