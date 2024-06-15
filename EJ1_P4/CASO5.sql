@@ -215,12 +215,18 @@ GROUP BY s.num
 
 --10. Provincia/s que más facturó durante el 2020.
 
-SELECT SUCURSAL.provincia, SUM(DETALLE.precio*DETALLE.cantidad) as total_facturado
-FROM SUCURSAL
-JOIN DETALLE ON SUCURSAL.num =DETALLE.num
-JOIN FACTURA ON DETALLE.numf= FACTURA.num
+SELECT provincia
+FROM sucursal
+JOIN detalle ON sucursal.num=detalle.num
+JOIN factura ON detalle.numf=factura.num
 WHERE extract(year from fecha)=2020
-GROUP BY SUCURSAL.provincia
-ORDER BY total_facturado DESC
-LIMIT 1;
+GROUP BY provincia
+HAVING SUM(DETALLE.precio*DETALLE.cantidad)=(SELECT SUM(DETALLE.precio*DETALLE.cantidad) tot
+												FROM SUCURSAL
+												JOIN DETALLE ON SUCURSAL.num =DETALLE.num
+												JOIN FACTURA ON DETALLE.numf= FACTURA.num
+												WHERE extract(year from fecha)=2020
+												GROUP BY provincia
+												ORDER BY tot DESC
+												Limit 1)
 
