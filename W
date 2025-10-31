@@ -1,0 +1,2 @@
+//Ruta para mis-pacientes
+Route::get('/mis-pacientes', [PacienteController::class, 'alertasClinicas'])->name('mis-pacientes');
